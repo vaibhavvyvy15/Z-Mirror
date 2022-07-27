@@ -44,8 +44,8 @@ def stats(update, context):
             f'<b>CPU Usage:</b> <code>{cpuUsage}</code>% | <b>RAM Usage:</b> <code>{mem_p}%</code>\n'
     if heroku := getHerokuDetails(HEROKU_API_KEY, HEROKU_APP_NAME):
         stats += heroku
-    sendMessage(stats, context.bot, update.message)
-    Thread(target=auto_delete_message, args=(context.bot, update.message, sendMessage)).start()
+    reply_message = sendMessage(stats, context.bot, update.message)
+    Thread(target=auto_delete_message, args=(context.bot, update.message, reply_message)).start()
 
 def start(update, context):
     buttons = ButtonMaker()

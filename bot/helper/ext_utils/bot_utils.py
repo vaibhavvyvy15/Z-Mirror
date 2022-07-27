@@ -283,11 +283,12 @@ def get_readable_message():
             buttons.sbutton("Prev", "status pre")
             buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
             buttons.sbutton("Next", "status nex")
+            buttons.sbutton("Refresh", str(ONE))
+            buttons.sbutton("Close", str(TWO))
             button = InlineKeyboardMarkup(buttons.build_menu(3))
 
             return msg + bmsg, button
         return msg + bmsg, sbutton
-        Thread(target=auto_delete_message, args=(bot, message, message)).start()
 
 def turn(data):
     try:
