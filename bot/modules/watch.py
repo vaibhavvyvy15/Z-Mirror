@@ -29,7 +29,6 @@ def _watch(bot, message, isZip=False, isLeech=False, multi=0):
                 buttons.buildbutton(f"{TITLE_NAME}", f"https://t.me/{CHANNEL_USERNAME}")
                 reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
                 return sendMarkup(f"<b>Dear {uname}️,\n\nI found that you haven't joined our Updates Channel yet.\n\nJoin and Use Bots Without Restrictions.</b>", bot, message, reply_markup)
-                Thread(target=auto_delete_message, args=(bot, message, message)).start()
         except Exception as e:
             LOGGER.info(str(e))
 

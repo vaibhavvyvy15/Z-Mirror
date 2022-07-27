@@ -342,7 +342,6 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                 buttons.buildbutton( f"{TITLE_NAME}", f"https://t.me/{CHANNEL_USERNAME}")
                 reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
                 return sendMarkup(f"<b>Dear {uname}️,\n\nI found that you haven't joined our Updates Channel yet.\n\nJoin and Use Bots Without Restrictions.</b>", bot, message, reply_markup)
-                Thread(target=auto_delete_message, args=(bot, message, message)).start()
         except Exception as e:
             LOGGER.info(str(e))
 
@@ -373,7 +372,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
 # Mute user
     try:
-        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 1, permissions=ChatPermissions(can_send_messages=False))
     except Exception as e:
         print(f'[MuteUser] Error: {type(e)} {e}')
 
@@ -454,7 +453,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     if not is_url(link) and not is_magnet(link) and not ospath.exists(link):
         
         try:
-            bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+            bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 1, permissions=ChatPermissions(can_send_messages=False))
         except Exception as e:
             print(f'[MuteUser] Error: {type(e)} {e}')
             
@@ -482,12 +481,12 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     if is_gdrive_link(link):
         if not isZip and not extract and not isLeech:
             try:
-                bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+                bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 1, permissions=ChatPermissions(can_send_messages=False))
             except Exception as e:
                 print(f'[MuteUser] Error: {type(e)} {e}')
             
             gmsg = "<b>You are MUTED until you learn how to use me.</b>"
-            gmsg += f"Watch others or read /{BotCommands.HelpCommand}"
+            gmsg += f"\nWatch others or read /{BotCommands.HelpCommand}\n\n"
             gmsg += f"Use /{BotCommands.CloneCommand} to clone Google Drive file/folder\n\n"
             gmsg += f"Use /{BotCommands.ZipMirrorCommand} to make zip of Google Drive folder\n\n"
             gmsg += f"Use /{BotCommands.UnzipMirrorCommand} to extracts Google Drive archive file"
