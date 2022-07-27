@@ -45,7 +45,7 @@ def stats(update, context):
     if heroku := getHerokuDetails(HEROKU_API_KEY, HEROKU_APP_NAME):
         stats += heroku
     sendMessage(stats, context.bot, update.message)
-    Thread(target=auto_delete_message, args=(bot, message, message)).start()
+    Thread(target=auto_delete_message, args=(context.bot, update.message, reply_message)).start()
 
 def start(update, context):
     buttons = ButtonMaker()
