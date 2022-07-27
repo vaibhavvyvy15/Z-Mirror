@@ -459,7 +459,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
             print(f'[MuteUser] Error: {type(e)} {e}')
             
         help_msg = "<b>You are MUTED until you learn how to use me.</b>"
-        help_msg += f"Watch others or read /{BotCommands.HelpCommand}"
+        help_msg += f"\nWatch others or read /{BotCommands.HelpCommand}"
         return sendMessage(help_msg, bot, message)
 
     LOGGER.info(link)
