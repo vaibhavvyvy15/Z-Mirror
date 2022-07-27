@@ -4,7 +4,7 @@ from telegram.ext import CommandHandler
 from threading import Thread
 from time import sleep
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
-from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, deleteMessage, delete_all_messages, update_all_messages, sendStatusMessage
+from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, deleteMessage, delete_all_messages, update_all_messages, sendStatusMessage, auto_delete_message
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.mirror_utils.status_utils.clone_status import CloneStatus
@@ -13,7 +13,7 @@ from bot import bot, dispatcher, LOGGER, CLONE_LIMIT, STOP_DUPLICATE, download_d
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, is_gdrive_link, is_gdtot_link, new_thread, is_appdrive_link
 from bot.helper.mirror_utils.download_utils.direct_link_generator import gdtot, appdrive
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
-from telegram import InlineKeyboardMarkup, ParseMode
+from telegram import InlineKeyboardMarkup, ParseMode, ChatPermissions
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
 def _clone(message, bot, multi=0):
@@ -27,6 +27,7 @@ def _clone(message, bot, multi=0):
                 buttons.buildbutton(f"{TITLE_NAME}", f"https://t.me/{CHANNEL_USERNAME}")
                 reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
                 return sendMarkup(f"<b>Dear {uname}️,\n\nI found that you haven't joined our Updates Channel yet.\n\nJoin and Use Bots Without Restrictions.</b>", bot, message, reply_markup)
+                Thread(target=auto_delete_message, args=(bot, message, message)).start()
         except Exception as e:
             LOGGER.info(str(e))
 
@@ -44,11 +45,18 @@ def _clone(message, bot, multi=0):
             buttons.buildbutton("Click Here to Start Me", f"{botstart}")
             startwarn = f"Dear {uname},\n\n<b>I found that you haven't started me in PM (Private Chat) yet.</b>\n\nFrom now on i will give link and leeched files in PM and log channel only"
             message = sendMarkup(startwarn, bot, message, InlineKeyboardMarkup(buttons.build_menu(2)))
+            Thread(target=auto_delete_message, args=(bot, message, message)).start()
             return
 
     args = message.text.split()
     reply_to = message.reply_to_message
     link = ''
+
+    try:
+        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+    except Exception as e:
+        print(f'[MuteUser] Error: {type(e)} {e}')
+
     if len(args) > 1:
         link = args[1].strip()
         if link.strip().isdigit():
@@ -146,6 +154,19 @@ def _clone(message, bot, multi=0):
             if apdict.get('link_type') == 'login':
                 LOGGER.info(f"Deleting: {link}")
                 gd.deletefile(link)
+        if MIRROR_LOGS:	
+            try:	
+                for chatid in MIRROR_LOGS:	
+                    bot.sendMessage(chat_id=chatid, text=result + cc, reply_markup=button, parse_mode=ParseMode.HTML)	
+            except Exception as e:	
+                LOGGER.warning(e)	
+        if BOT_PM and message.chat.type != 'private':	
+            try:	
+                bot.sendMessage(message.from_user.id, text=result, reply_markup=button,	
+                                parse_mode=ParseMode.HTML)	
+            except Exception as e:	
+                LOGGER.warning(e)	
+                return
     else:
         sendMessage('Send Gdrive or GDToT/AppDrive link along with command or by replying to the link by command', bot, message)
 

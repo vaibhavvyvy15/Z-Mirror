@@ -9,7 +9,7 @@ from threading import Thread
 from subprocess import Popen
 from html import escape
 from telegram.ext import CommandHandler
-from telegram import InlineKeyboardMarkup, ParseMode, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, ParseMode, InlineKeyboardButton, ChatPermissions
 from bot import bot, Interval, INDEX_URL, BUTTON_FOUR_NAME, BUTTON_FOUR_URL, BUTTON_FIVE_NAME, BUTTON_FIVE_URL, \
                 BUTTON_SIX_NAME, BUTTON_SIX_URL, VIEW_LINK, aria2, QB_SEED, dispatcher, DOWNLOAD_DIR, \
                 download_dict, download_dict_lock, TG_SPLIT_SIZE, LOGGER, MEGA_KEY, DB_URI, INCOMPLETE_TASK_NOTIFIER, \
@@ -33,7 +33,7 @@ from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.mirror_utils.upload_utils.pyrogramEngine import TgUploader
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, delete_all_messages, update_all_messages
+from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, delete_all_messages, update_all_messages, auto_delete_message
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.ext_utils.telegraph_helper import telegraph
@@ -342,6 +342,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                 buttons.buildbutton( f"{TITLE_NAME}", f"https://t.me/{CHANNEL_USERNAME}")
                 reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
                 return sendMarkup(f"<b>Dear {uname}️,\n\nI found that you haven't joined our Updates Channel yet.\n\nJoin and Use Bots Without Restrictions.</b>", bot, message, reply_markup)
+                Thread(target=auto_delete_message, args=(bot, message, message)).start()
         except Exception as e:
             LOGGER.info(str(e))
 
@@ -360,6 +361,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
             startwarn = f"Dear {uname},\n\n<b>I found that you haven't started me in PM (Private Chat) yet.</b>\n\n" \
                         f"From now on i will give link and leeched files in PM and log channel only"
             message = sendMarkup(startwarn, bot, message, InlineKeyboardMarkup(buttons.build_menu(2)))
+            Thread(target=auto_delete_message, args=(bot, message, message)).start()
             return
 
     mesg = message.text.split('\n')
@@ -368,6 +370,12 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     qbsel = False
     index = 1
     is_gdtot = False
+
+# Mute user
+    try:
+        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+    except Exception as e:
+        print(f'[MuteUser] Error: {type(e)} {e}')
 
     if len(message_args) > 1:
         args = mesg[0].split(maxsplit=3)
@@ -444,16 +452,14 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                 link = file.get_file().file_path
 
     if not is_url(link) and not is_magnet(link) and not ospath.exists(link):
-        help_msg = "<b>Send link along with command line:</b>"
-        help_msg += "\n<code>/command</code> {link} |newname pswd: xx [zip/unzip]"
-        help_msg += "\n\n<b>By replying to link or file:</b>"
-        help_msg += "\n<code>/command</code> |newname pswd: xx [zip/unzip]"
-        help_msg += "\n\n<b>Direct link authorization:</b>"
-        help_msg += "\n<code>/command</code> {link} |newname pswd: xx\nusername\npassword"
-        help_msg += "\n\n<b>Qbittorrent selection and seed:</b>"
-        help_msg += "\n<code>/qbcommand</code> <b>s</b>(for selection) <b>d</b>(for seeding) {link} or by replying to {file/link}"
-        help_msg += "\n\n<b>Multi links only by replying to first link or file:</b>"
-        help_msg += "\n<code>/command</code> 10(number of links/files)"
+        
+        try:
+            bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+        except Exception as e:
+            print(f'[MuteUser] Error: {type(e)} {e}')
+            
+        help_msg = "<b>You are MUTED until you learn how to use me.</b>"
+        help_msg += f"Watch others or read /{BotCommands.HelpCommand}"
         return sendMessage(help_msg, bot, message)
 
     LOGGER.info(link)
@@ -475,7 +481,14 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
     if is_gdrive_link(link):
         if not isZip and not extract and not isLeech:
-            gmsg = f"Use /{BotCommands.CloneCommand} to clone Google Drive file/folder\n\n"
+            try:
+                bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+            except Exception as e:
+                print(f'[MuteUser] Error: {type(e)} {e}')
+            
+            gmsg = "<b>You are MUTED until you learn how to use me.</b>"
+            gmsg += f"Watch others or read /{BotCommands.HelpCommand}"
+            gmsg += f"Use /{BotCommands.CloneCommand} to clone Google Drive file/folder\n\n"
             gmsg += f"Use /{BotCommands.ZipMirrorCommand} to make zip of Google Drive folder\n\n"
             gmsg += f"Use /{BotCommands.UnzipMirrorCommand} to extracts Google Drive archive file"
             sendMessage(gmsg, bot, message)
@@ -485,7 +498,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
         if MEGA_KEY is not None:
             Thread(target=MegaDownloader(listener).add_download, args=(link, f'{DOWNLOAD_DIR}{listener.uid}/')).start()
         else:
-            sendMessage('MEGA_API_KEY not Provided!', bot, message)
+            sendMessage('MEGA is not alloud on this bot.', bot, message)
     elif isQbit:
         Thread(target=QbDownloader(listener).add_qb_torrent, args=(link, f'{DOWNLOAD_DIR}{listener.uid}', qbsel)).start()
     else:

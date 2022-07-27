@@ -1,6 +1,6 @@
 from threading import Thread
 from telegram.ext import CommandHandler, CallbackQueryHandler
-from telegram import InlineKeyboardMarkup
+from telegram import InlineKeyboardMarkup, ChatPermissions
 from time import sleep
 from re import split as re_split
 from bot import DOWNLOAD_DIR, dispatcher, BOT_PM, LOGGER, FSUB, FSUB_CHANNEL_ID, CHANNEL_USERNAME, TITLE_NAME
@@ -29,6 +29,7 @@ def _watch(bot, message, isZip=False, isLeech=False, multi=0):
                 buttons.buildbutton(f"{TITLE_NAME}", f"https://t.me/{CHANNEL_USERNAME}")
                 reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
                 return sendMarkup(f"<b>Dear {uname}️,\n\nI found that you haven't joined our Updates Channel yet.\n\nJoin and Use Bots Without Restrictions.</b>", bot, message, reply_markup)
+                Thread(target=auto_delete_message, args=(bot, message, message)).start()
         except Exception as e:
             LOGGER.info(str(e))
 
@@ -60,6 +61,11 @@ def _watch(bot, message, isZip=False, isLeech=False, multi=0):
             link = ''
     else:
         link = ''
+    
+    try:
+        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+    except Exception as e:
+        print(f'[MuteUser] Error: {type(e)} {e}')
     
     name = mssg.split('|', maxsplit=1)
     if len(name) > 1:
