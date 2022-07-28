@@ -29,11 +29,10 @@ def cancel_mirror(update, context):
         try:
             uname = update.message.from_user.mention_html(update.message.from_user.first_name)
             user = context.bot.get_chat_member(CHAT_ID, update.message.from_user.id)
-            if user.status not in ['creator', 'administrator']:
-                context.bot.restrict_chat_member(chat_id=update.message.chat.id, user_id=update.message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
-                return sendMessage(f"Dear {uname}️,\n\n<b>You are MUTED until you learn how to use me.\n\nWatch others or read </b>/{BotCommands.HelpCommand}", context.bot, update.message)
-            else:
+            if user.status in ['creator', 'administrator']:
                 return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", context.bot, update.message)
+            context.bot.restrict_chat_member(chat_id=update.message.chat.id, user_id=update.message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
+            return sendMessage(f"Dear {uname}️,\n\n<b>You are MUTED until you learn how to use me.\n\nWatch others or read </b>/{BotCommands.HelpCommand}", context.bot, update.message)
         except Exception as e:
             print(f'[MuteUser] Error: {type(e)} {e}')
         return
@@ -45,15 +44,11 @@ def cancel_mirror(update, context):
 
 def cancel_all(status):
     gid = ''
-    while True:
-        dl = getAllDownload(status)
-        if dl:
-            if dl.gid() != gid:
-                gid = dl.gid()
-                dl.download().cancel_download()
-                sleep(1)
-        else:
-            break
+    while dl := getAllDownload(status):
+        if dl.gid() != gid:
+            gid = dl.gid()
+            dl.download().cancel_download()
+            sleep(1)
 
 def cancell_all_buttons(update, context):
     buttons = button_build.ButtonMaker()

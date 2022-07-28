@@ -27,7 +27,7 @@ def select_type(update, context):
     key = msg.reply_to_message.text.split(" ", maxsplit=1)[1]
     data = query.data
     data = data.split()
-    if OWNER_ID != user_id and user_id != int(data[1]):
+    if OWNER_ID != user_id != int(data[1]):
         return query.answer(text="Not Yours, STFU!", show_alert=True)
     elif data[2] == 'cancel':
         query.answer()

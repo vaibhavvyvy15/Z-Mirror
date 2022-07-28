@@ -92,8 +92,7 @@ def zippy_share(url: str) -> str:
     except Exception as err:
         LOGGER.error(err)
         raise DirectDownloadLinkException("ERROR: Can't Generate direct link")
-    dl_url = f"{base_url}/{uri1}/{int(mtk)}/{uri2}"
-    return dl_url
+    return f"{base_url}/{uri1}/{int(mtk)}/{uri2}"
 
 def yandex_disk(url: str) -> str:
     """ Yandex.Disk direct link generator
