@@ -272,10 +272,10 @@ def get_readable_message():
         bmsg += f"\n<b>DN:</b> {get_readable_file_size(dlspeed_bytes)}/s<b> | UP:</b> {get_readable_file_size(upspeed_bytes)}/s"
 
         buttons = ButtonMaker()
-        buttons.sbutton("Statistics", str(THREE))
         buttons.sbutton("Refresh", str(ONE))
         buttons.sbutton("Close", str(TWO))
-        sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
+        buttons.sbutton("Statistics", str(THREE))
+        sbutton = InlineKeyboardMarkup(buttons.build_menu(2))
 
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
             msg += f"\n<b>Total Tasks:</b> {tasks}\n"
@@ -406,7 +406,7 @@ def close(update, context):
     if admins:
         delete_all_messages()
     else:
-        query.answer(text="You Don't Have Admin Rights!", show_alert=True)
+        query.answer(text="Sorry, only Admins can close !", show_alert=True)
 
 def pop_up_stats(update, context):
     query = update.callback_query
