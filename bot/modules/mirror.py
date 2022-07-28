@@ -37,7 +37,7 @@ from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, de
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.ext_utils.telegraph_helper import telegraph
-from bot.__main__ import help
+from bot.__main__ import *
 
 class MirrorListener:
     def __init__(self, bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, tag=None, seed=False):
