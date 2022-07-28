@@ -457,9 +457,11 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
             user = bot.get_chat_member(FSUB_CHANNEL_ID, message.from_user.id)
             if user.status not in ['creator', 'administrator']:
                 bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
-                buttons.buildbutton( f"<b>READ HELP</b>", f"https://telegra.ph/{help}")
+                buttons.buildbutton( f"READ HELP", f"https://t.me/{BotCommands.HelpCommand}")
                 reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
                 return sendMarkup(f"<b>Dear {uname}️,\n\nYou are MUTED until you learn how to use me.\n\nWatch others or read HELP</b>", bot, message, reply_markup)
+            else:
+                return sendMessage(f"Woo, <b>Admin</b> detected!\nPlease read /{BotCommands.HelpCommand}")
         except Exception as e:
             print(f'[MuteUser] Error: {type(e)} {e}')
 
