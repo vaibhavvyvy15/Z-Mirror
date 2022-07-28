@@ -167,7 +167,9 @@ def _clone(message, bot, multi=0):
                 LOGGER.warning(e)	
                 return
     else:
-        sendMessage('Send Gdrive or GDToT/AppDrive link along with command or by replying to the link by command', bot, message)
+        msg = "<b>You are MUTED until you learn how to use me.</b>"
+        msg += f"\nWatch others or read /{BotCommands.HelpCommand}"
+        sendMessage(msg, bot, message)
 
 @new_thread
 def cloneNode(update, context):
