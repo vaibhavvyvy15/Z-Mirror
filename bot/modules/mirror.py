@@ -372,7 +372,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
 # Mute user
     try:
-        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 1, permissions=ChatPermissions(can_send_messages=False))
+        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
     except Exception as e:
         print(f'[MuteUser] Error: {type(e)} {e}')
 
@@ -453,7 +453,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     if not is_url(link) and not is_magnet(link) and not ospath.exists(link):
         
         try:
-            bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 1, permissions=ChatPermissions(can_send_messages=False))
+            bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
         except Exception as e:
             print(f'[MuteUser] Error: {type(e)} {e}')
             
@@ -481,7 +481,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     if is_gdrive_link(link):
         if not isZip and not extract and not isLeech:
             try:
-                bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 1, permissions=ChatPermissions(can_send_messages=False))
+                bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
             except Exception as e:
                 print(f'[MuteUser] Error: {type(e)} {e}')
             
