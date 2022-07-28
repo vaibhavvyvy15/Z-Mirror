@@ -52,7 +52,7 @@ def _clone(message, bot, multi=0):
     link = ''
 
     try:
-        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 20, permissions=ChatPermissions(can_send_messages=False))
+        bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
     except Exception as e:
         print(f'[MuteUser] Error: {type(e)} {e}')
 
