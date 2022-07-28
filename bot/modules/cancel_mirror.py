@@ -28,7 +28,7 @@ def cancel_mirror(update, context):
     elif len(context.args) == 0:
         try:
             uname = update.message.from_user.mention_html(update.message.from_user.first_name)
-            user = bot.get_chat_member(CHAT_ID, update.message.from_user.id)
+            user = context.bot.get_chat_member(CHAT_ID, update.message.from_user.id)
             if user.status not in ['creator', 'administrator']:
                 bot.restrict_chat_member(chat_id=update.message.chat.id, user_id=update.message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
                 return sendMessage(f"Dear {uname}️,\n\n<b>You are MUTED until you learn how to use me.\n\nWatch others or read </b>/{BotCommands.HelpCommand}", context.bot, update.message)
