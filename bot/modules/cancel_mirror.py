@@ -9,7 +9,7 @@ from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, au
 from bot.helper.ext_utils.bot_utils import getDownloadByGid, getAllDownload
 from bot.helper.telegram_helper import button_build
 
-def cancel_mirror(update, message, context):
+def cancel_mirror(update, context, message):
     user_id = update.message.from_user.id
     if len(context.args) == 1:
         gid = context.args[0]
