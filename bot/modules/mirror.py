@@ -13,7 +13,7 @@ from telegram import InlineKeyboardMarkup, ParseMode, InlineKeyboardButton, Chat
 from bot import bot, Interval, INDEX_URL, BUTTON_FOUR_NAME, BUTTON_FOUR_URL, BUTTON_FIVE_NAME, BUTTON_FIVE_URL, \
                 BUTTON_SIX_NAME, BUTTON_SIX_URL, VIEW_LINK, aria2, QB_SEED, dispatcher, DOWNLOAD_DIR, \
                 download_dict, download_dict_lock, TG_SPLIT_SIZE, LOGGER, MEGA_KEY, DB_URI, INCOMPLETE_TASK_NOTIFIER, \
-                LEECH_LOG, BOT_PM, MIRROR_LOGS, FSUB, CHANNEL_USERNAME, FSUB_CHANNEL_ID, TITLE_NAME, AUTHORIZED_CHATS
+                LEECH_LOG, BOT_PM, MIRROR_LOGS, FSUB, CHANNEL_USERNAME, FSUB_CHANNEL_ID, TITLE_NAME, AUTHORIZED_CHATS, CHAT_ID
 from bot.helper.ext_utils.bot_utils import is_url, is_magnet, is_gdtot_link, is_mega_link, is_gdrive_link, get_content_type, get_readable_time
 from bot.helper.ext_utils.fs_utils import get_base_name, get_path_size, split_file, clean_download
 from bot.helper.ext_utils.shortenurl import short_url
@@ -454,12 +454,13 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
         try:
             uname = message.from_user.mention_html(message.from_user.first_name)
-            user = bot.get_chat_member(AUTHORIZED_CHATS, message.from_user.id)
+            user = bot.get_chat_member(CHAT_ID, message.from_user.id)
             if user.status not in ['creator', 'administrator']:
                 bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
                 return sendMessage(f"Dear {uname}️,\n\n<b>You are MUTED until you learn how to use me.\n\nWatch others or read </b>/{BotCommands.HelpCommand}", bot, message)
+                Thread(target=auto_delete_message, args=(context.bot, update.message, sendMessage)).start()
             else:
-                return sendMessage(f"Woo, <b>Admin</b> detected!\nPlease read /{BotCommands.HelpCommand}", bot, message)
+                return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", bot, message)
         except Exception as e:
             print(f'[MuteUser] Error: {type(e)} {e}')
         return
@@ -484,23 +485,22 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     if is_gdrive_link(link):
         if not isZip and not extract and not isLeech:
             try:
-                bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
+                uname = message.from_user.mention_html(message.from_user.first_name)
+                user = bot.get_chat_member(CHAT_ID, message.from_user.id)
+                if user.status not in ['creator', 'administrator']:
+                    bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
+                    return sendMessage(f"Dear {uname}️,\n\n<b>You are MUTED until you learn how to use me.\n\nWatch others or read </b>/{BotCommands.HelpCommand}", bot, message)
+                else:
+                    return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", bot, message)
             except Exception as e:
                 print(f'[MuteUser] Error: {type(e)} {e}')
-            
-            gmsg = "<b>You are MUTED until you learn how to use me.</b>"
-            gmsg += f"\nWatch others or read /{BotCommands.HelpCommand}\n\n"
-            gmsg += f"Use /{BotCommands.CloneCommand} to clone Google Drive file/folder\n\n"
-            gmsg += f"Use /{BotCommands.ZipMirrorCommand} to make zip of Google Drive folder\n\n"
-            gmsg += f"Use /{BotCommands.UnzipMirrorCommand} to extracts Google Drive archive file"
-            sendMessage(gmsg, bot, message)
         else:
             Thread(target=add_gd_download, args=(link, listener, name, is_gdtot)).start()
     elif is_mega_link(link):
         if MEGA_KEY is not None:
             Thread(target=MegaDownloader(listener).add_download, args=(link, f'{DOWNLOAD_DIR}{listener.uid}/')).start()
         else:
-            sendMessage('MEGA is not alloud on this bot.', bot, message)
+            sendMessage('MEGA is not allowed on this bot.', bot, message)
     elif isQbit:
         Thread(target=QbDownloader(listener).add_qb_torrent, args=(link, f'{DOWNLOAD_DIR}{listener.uid}', qbsel)).start()
     else:
