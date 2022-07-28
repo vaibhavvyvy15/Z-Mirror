@@ -453,6 +453,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     if not is_url(link) and not is_magnet(link) and not ospath.exists(link):
 
         try:
+            user = bot.get_chat_member(message.from_user.id)
             if user.status not in ['creator', 'administrator']:
                 bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
             else: 
