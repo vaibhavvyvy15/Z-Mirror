@@ -461,7 +461,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                 reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
                 return sendMarkup(f"<b>Dear {uname}️,\n\nYou are MUTED until you learn how to use me.\n\nWatch others or read HELP</b>", bot, message, reply_markup)
             else:
-                return sendMessage(f"Woo, <b>Admin</b> detected!\nPlease read /{BotCommands.HelpCommand}")
+                return sendMessage(f"Woo, <b>Admin</b> detected!\nPlease read /{BotCommands.HelpCommand}, bot, message")
         except Exception as e:
             print(f'[MuteUser] Error: {type(e)} {e}')
 
