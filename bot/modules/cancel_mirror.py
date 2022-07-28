@@ -9,7 +9,7 @@ from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, au
 from bot.helper.ext_utils.bot_utils import getDownloadByGid, getAllDownload
 from bot.helper.telegram_helper import button_build
 
-def cancel_mirror(update, context, message):
+def cancel_mirror(update, context):
     user_id = update.message.from_user.id
     if len(context.args) == 1:
         gid = context.args[0]
@@ -25,7 +25,7 @@ def cancel_mirror(update, context, message):
                 dl = None
         if not dl:
             return sendMessage("This is not an active task!", context.bot, update.message)
-    elif len(context.args) == 0:
+    elif len(context.args, message) == 0:
         try:
             uname = message.from_user.mention_html(message.from_user.first_name)
             user = bot.get_chat_member(CHAT_ID, message.from_user.id)
