@@ -194,7 +194,7 @@ def update_all_messages(force=False):
 
 def get_readable_message():
     with download_dict_lock:
-        msg = ""
+        msg = f"Added your requested link to download.\nWill send in PM and LOGS once done."
         if STATUS_LIMIT is not None:
             tasks = len(download_dict)
             global pages
