@@ -179,6 +179,8 @@ def _clone(message, bot, multi=0):
                     return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", bot, message)
             except Exception as e:
                 print(f'[MuteUser] Error: {type(e)} {e}')
+        else:
+            return sendMessage(f"Please enter a valid command.\nRead /{BotCommands.HelpCommand} and try again.", bot, message)
 
 @new_thread
 def cloneNode(update, context):

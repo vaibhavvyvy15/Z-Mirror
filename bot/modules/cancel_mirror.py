@@ -37,7 +37,7 @@ def cancel_mirror(update, context):
                     return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", context.bot, update.message)
             except Exception as e:
                 print(f'[MuteUser] Error: {type(e)} {e}')
-            return
+        return sendMessage(f"Please enter a valid command.\nRead /{BotCommands.HelpCommand} and try again.", bot, message)
 
     if OWNER_ID != user_id and dl.message.from_user.id != user_id and user_id not in SUDO_USERS:
         return sendMessage("This is not your Task, STFU !", context.bot, update.message)

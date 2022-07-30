@@ -118,7 +118,7 @@ def _watch(bot, message, isZip=False, isLeech=False, multi=0):
                     return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", bot, message)
             except Exception as e:
                 print(f'[MuteUser] Error: {type(e)} {e}')
-            return
+        return sendMessage(f"Please enter a valid command.\nRead /{BotCommands.HelpCommand} and try again.", bot, message)
 
     listener = MirrorListener(bot, message, isZip, isLeech=isLeech, pswd=pswd, tag=tag)
     buttons = button_build.ButtonMaker()

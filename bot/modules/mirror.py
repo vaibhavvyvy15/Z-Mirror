@@ -462,7 +462,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                     return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", bot, message)
             except Exception as e:
                 print(f'[MuteUser] Error: {type(e)} {e}')
-            return
+        return sendMessage(f"Please enter a valid command.\nRead /{BotCommands.HelpCommand} and try again.", bot, message)
 
     LOGGER.info(link)
 
@@ -495,6 +495,8 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                         return sendMessage(f"OMG, {uname} You are a <b>Admin.</b>\n\nStill don't know how to use me!\n\nPlease read /{BotCommands.HelpCommand}", bot, message)
                 except Exception as e:
                     print(f'[MuteUser] Error: {type(e)} {e}')
+            else:
+                return sendMessage(f"Please enter a valid command.\nRead /{BotCommands.HelpCommand} and try again.", bot, message)
         else:
             Thread(target=add_gd_download, args=(link, listener, name, is_gdtot)).start()
     elif is_mega_link(link):
