@@ -194,7 +194,7 @@ def update_all_messages(force=False):
 
 def get_readable_message():
     with download_dict_lock:
-        msg = f""
+        msg = ""
         if STATUS_LIMIT is not None:
             tasks = len(download_dict)
             global pages
